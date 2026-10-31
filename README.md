@@ -24,3 +24,10 @@ Image metadata produced by real cameras uses one of three EXIF date-time formats
 ## Edge cases
 
 Subseconds and timezone offsets are parsed when present. A trailing subsecond fraction with no decimal (a common camera bug) is ignored. Unparseable input raises `ExifTimeError`. Strings with no timezone are returned with an explicit UTC offset of `+00:00` to avoid ambiguity downstream.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
